@@ -1,12 +1,20 @@
 <div class="field">
 
     <div class="card-stack">
+
+        <!--card staple-->
         @for(c of [1,2,3,4]; track c; let i = $index){
-            <img [ngStyle]="{'right.px': i * 5}" src="img/cards/card_cover.png">
-            <img (click)="takeCard()" class="top-card" style="right:25px" src="img/cards/card_cover.png">
-            @if(pickCardAnimation){
-                <img (click)="takeCard()" class="pick-card" style="right:25px" src="img/cards/ace_1.png">
-            }
+        <img [ngStyle]="{'right.px': i * 5}" src="img/cards/card_cover.png">
+        }
+        <img (click)="takeCard()" class="top-card" style="right:25px" src="img/cards/card_cover.png">
+        
+        <!-- Stack for played Cards-->
+        @for(c of game.playedCards; track c){
+            <img class="played-card" src="img/cards/{{ c }}.png">
+        }
+        <!-- current card animation-->
+        @if(pickCardAnimation){
+        <img class="pick-card" style="right:25px" src="img/cards/{{ currentCard }}.png">
         }
     </div>
 
