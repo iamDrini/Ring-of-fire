@@ -1,5 +1,5 @@
 export class GameModel {
-    public players: string[] = ['Hans', 'Freddy', 'Peter'];
+    public players: string[] = [];
     public stack: string[] = [];
     public playedCards: string[] = [];
     public currentPlayer: number = 0;
@@ -15,6 +15,7 @@ export class GameModel {
     }
 }
 
+/* overstack flow*/ 
 function shuffle(array:string[]) {
   let currentIndex = array.length;
 

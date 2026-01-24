@@ -9,11 +9,11 @@
         @for(c of [1,2,3,4]; track c; let i = $index){
         <img [ngStyle]="{'right.px': i * 5}" src="img/cards/card_cover.png">
         }
-        <img (click)="takeCard()" class="top-card" style="right:25px" src="img/cards/card_cover.png">
+        <img draggable="false" (click)="takeCard()" class="top-card" style="right:25px" src="img/cards/card_cover.png">
         
         <!-- Stack for played Cards-->
         @for(c of game.playedCards; track c){
-            <img class="played-card" src="img/cards/{{ c }}.png">
+            <img draggable="false" class="played-card" src="img/cards/{{ c }}.png">
         }
         <!-- current card animation-->
         @if(pickCardAnimation){
@@ -22,3 +22,7 @@
     </div>
 
 </div>
+
+<button (click)="openDialog()" matFab class="btn-add">
+    <mat-icon>add</mat-icon>
+</button>
