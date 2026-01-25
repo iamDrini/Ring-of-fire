@@ -7,7 +7,7 @@
 
         <!--card staple-->
         @for(c of [1,2,3,4]; track c; let i = $index){
-        <img [ngStyle]="{'right.px': i * 5}" src="img/cards/card_cover.png">
+        <img [ngStyle]="{'right.px': i * 5}" style="right:25px" src="img/cards/card_cover.png">
         }
         <img draggable="false" (click)="takeCard()" class="top-card" style="right:25px" src="img/cards/card_cover.png">
         
@@ -22,6 +22,8 @@
     </div>
 
 </div>
+
+<app-game-info [card]="currentCard" class="pin-bottom"></app-game-info>
 
 <button (click)="openDialog()" matFab class="btn-add">
     <mat-icon>add</mat-icon>

@@ -9,6 +9,7 @@ import { DialogAddPlayer } from '../dialog-add-player/dialog-add-player';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { GameInfo } from "../game-info/game-info";
 
 export interface DialogData {
   name: string;
@@ -18,11 +19,11 @@ export interface DialogData {
 @Component({
   selector: 'app-game',
   imports: [CommonModule,
-     Player,
-     MatFormFieldModule, MatInputModule,
-     FormsModule,
-     MatButtonModule,
-     MatIconModule],
+    Player,
+    MatFormFieldModule, MatInputModule,
+    FormsModule,
+    MatButtonModule,
+    MatIconModule, GameInfo],
   templateUrl: './game.html',
   styleUrl: './game.scss',
 })
@@ -50,6 +51,9 @@ export class Game implements OnInit {
       if (card) {
         this.currentCard = card;
         this.pickCardAnimation = true;
+
+        this.game.currentPlayer++;
+        this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
         setTimeout(() => {
           this.game.playedCards.push(this.currentCard);
           this.pickCardAnimation = false;
