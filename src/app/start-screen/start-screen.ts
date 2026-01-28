@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { Firestore, collection, addDoc } from '@angular/fire/firestore';
+import { GameModel } from '../../models/game';
 
 @Component({
   selector: 'app-start-screen',
@@ -9,12 +11,17 @@ import { Router } from '@angular/router';
 })
 export class StartScreen {
 
-  constructor(private router:Router){
+  firestore: Firestore = inject(Firestore);
 
+  constructor(private router: Router) {}
+
+  async newGame() {
+    const game = new GameModel();
+    try {
+      const docRef = await addDoc(collection(this.firestore, 'games'), game.toJson());
+      this.router.navigateByUrl('/game/' + docRef.id);
+    } catch (error) {
+      console.error('Error creating game:', error);
+    }
   }
-
-  newGame(){
-    this.router.navigateByUrl('/game');
-  }
-
 }

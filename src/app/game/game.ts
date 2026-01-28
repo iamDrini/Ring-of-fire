@@ -10,9 +10,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { GameInfo } from "../game-info/game-info";
-import { Firestore, collection, collectionData } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, addDoc, doc, getDoc, updateDoc, docData } from '@angular/fire/firestore';
 import { AsyncPipe } from '@angular/common';
 import { Observable } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 
 export interface DialogData {
   name: string;
@@ -35,44 +36,63 @@ export class Game implements OnInit {
 
   firestore: Firestore = inject(Firestore);
   items$: Observable<any[]>;
-
-  pickCardAnimation = false;
-  currentCard: string = '';
-  game = new GameModel();
   
-  constructor(private cdr: ChangeDetectorRef, public dialog: MatDialog){
+  game = new GameModel();
+  gameId: string = '';
+  
+  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef, public dialog: MatDialog){
     const games = collection(this.firestore, 'games');
     this.items$ = collectionData(games);
-    
-    // Subscribe für direkte Datenverarbeitung
-    this.items$.subscribe((game) => {
-      console.log('Games collection updated:', game);
-      // Hier kannst du die Daten verarbeiten
-    });
   }
 
   ngOnInit(): void {
-    this.newGame();
+    this.route.params.subscribe((params) => {
+      const gameId = params['id'];
+      if (gameId) {
+        this.loadGame(gameId);
+      }
+    });
+  }
+
+  async loadGame(gameId: string) {
+    this.gameId = gameId;
+    const docRef = doc(this.firestore, 'games', gameId);
+    
+    // Echtzeit-Updates mit docData
+    docData(docRef).subscribe((data: any) => {
+      if (data) {
+        this.game.players = data['players'] || [];
+        this.game.stack = data['stack'] || [];
+        this.game.playedCards = data['playedCards'] || [];
+        this.game.currentPlayer = data['currentPlayer'] || 0;
+        this.game.pickCardAnimation = data['pickCardAnimation'] || false;
+        this.game.currentCard = data['currentCard'] || '';
+        console.log('Game updated in realtime:', data);
+        this.cdr.detectChanges();
+      } else {
+        console.error('Game not found!');
+      }
+    });
   }
 
   newGame() {
     this.game = new GameModel();
-    console.log(this.game)
   }
 
   takeCard() {
-    if (!this.pickCardAnimation) {
+    if (!this.game.pickCardAnimation) {
       const card = this.game.stack.pop();
       if (card) {
-        this.currentCard = card;
-        this.pickCardAnimation = true;
-
+        this.game.currentCard = card;
+        this.game.pickCardAnimation = true;
         this.game.currentPlayer++;
         this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
+        this.updateGame();
+        
         setTimeout(() => {
-          this.game.playedCards.push(this.currentCard);
-          this.pickCardAnimation = false;
-          this.cdr.detectChanges();
+          this.game.playedCards.push(this.game.currentCard);
+          this.game.pickCardAnimation = false;
+          this.updateGame();
         }, 1000);
       }
     }
@@ -85,8 +105,20 @@ export class Game implements OnInit {
       if (name) {
         this.game.players.push(name);
         this.cdr.detectChanges();
+        this.updateGame();
       }
     });
+  }
+
+  async updateGame() {
+    if (this.gameId) {
+      try {
+        await updateDoc(doc(this.firestore, 'games', this.gameId), this.game.toJson());
+        console.log('Game updated in Firestore');
+      } catch (error) {
+        console.error('Error updating game:', error);
+      }
+    }
   }
 
 }
