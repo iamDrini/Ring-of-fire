@@ -1,6 +1,11 @@
 @for(player of game.players; track player; let i = $index){
-    <app-player [ngStyle]="{'top.px': 100 + 90 * i}" class="player-position" [playerActive]="i == game.currentPlayer" [name]="player"></app-player>
+    <app-player [ngStyle]="{'top.px': 100 + 90 * i}" class="player-position hide-mobile" [playerActive]="i == game.currentPlayer" [name]="player"></app-player>
 }
+<div class="scroll-container hide-desktop">
+@for(player of game.players; track player; let i = $index){
+    <app-player-mobile [playerActive]="i == game.currentPlayer" [name]="player"></app-player-mobile>
+}
+</div>
 <div class="field">
 
     <div class="card-stack">

@@ -14,6 +14,7 @@ import { Firestore, collection, collectionData, addDoc, doc, getDoc, updateDoc, 
 import { AsyncPipe } from '@angular/common';
 import { Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { PlayerMobile } from "../player-mobile/player-mobile";
 
 export interface DialogData {
   name: string;
@@ -27,7 +28,7 @@ export interface DialogData {
     MatFormFieldModule, MatInputModule,
     FormsModule,
     MatButtonModule,
-    MatIconModule, GameInfo],
+    MatIconModule, GameInfo, PlayerMobile],
 
   templateUrl: './game.html',
   styleUrl: './game.scss',
